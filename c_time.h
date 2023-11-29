@@ -59,3 +59,24 @@ class Time
 };
 
 void Test();
+
+/// записываем массив объектов и его размер n в бинарный файл с именем name
+void Ob_in_file(Time* a,const int n, const std::string& name);
+
+///возвращаем из бинарного файла массив объектов и его размер 
+Time* Ob_out_file(int& n, const std::string& name);
+
+///запись массива объектов в текстовый файл
+void Ob_in_txt(Time* a,int n, const std::string& name);
+
+///возвращаем из текстового файла массив объектов и его размер
+Time* Ob_out_txt(int& n, const std::string& name);
+
+///считает кол-во объектов в текстовом файле
+int kol_ob_in_txt(const std::string& name);
+
+///создаём массив указателей на объекты
+Time** Creat_arr(const int n);
+
+///удалить массив указателей на объекты и объекты
+void del_arr(Time** a, int n);

@@ -9,14 +9,15 @@ using namespace std;
 
 int main() {
 	setlocale(0,"Russian");
+	string s;
 
-	Time *a1=new Time(10,20,30);
+	Time* a1 = new Time(10, 20, 30);
 
 	Test();
 
 	//массив объектов
 	// -> --- разименование и обращение к методу объекта
-	string s = a1->to_str();
+	 s = a1->to_str();
 	cout << "Время: " << s<<endl;
 
 	try {
@@ -70,11 +71,10 @@ int main() {
 
 	delete a1;
 
-	Time* ob = new Time[3]{ Time(2,4,6), Time(0,9,40)};//создали массив объектов
-	// Time* ob = new Time[3]{ Time(2,4,6), Time(0,9,40) };//создали массив объектов 
-	// Time[0] h=2 m=4 s=6
-	// Time[1] h=0 m=9 s=40
-	// Time[2] h=0 m=0 s=0
+	Time* ob = new Time[3]{ Time(2,4,6), Time(0,9,40)};//создали массив объектов 
+	 //Time[0] h=2 m=4 s=6
+	 //Time[1] h=0 m=9 s=40
+	 //Time[2] h=0 m=0 s=0
 
 
 	//выводим время трёх объектов
@@ -104,7 +104,71 @@ int main() {
 	s = ob[0].to_str();
 	cout << "Время 0: " << s << endl;
 
+	 cout << "Введите имя файла " << endl;
+	cin >> s;
+	try {
+		Ob_in_file(ob, 3, s);
+		delete[]ob;
+		int n = 0;
+		ob = Ob_out_file(n, s);
 
-	delete[]ob;
+		for (int i = 0; i < n; i++)
+		{
+			s = ob[i].to_str();
+			cout << "Время " << i + 1 << endl;
+			cout << s << endl;
+		}
+	}
+	catch (const exception& error)
+	{
+		cout << error.what() << endl;
+	}
+	
+	try 
+	{
+		cout << "Введите имя файла " << endl;
+		cin >> s;
+		Ob_in_txt(ob, 3, s);
+		delete[]ob;
 
+		int n = 0;
+		ob = Ob_out_txt(n, s);
+		for (int i = 0; i < n; i++)
+		{
+			s = ob[i].to_str();
+			cout << "Время " << i + 1 << endl;
+			cout << s << endl;
+		}
+	}
+	catch (const exception& error)
+	{
+		cout << error.what() << endl;
+	}
+
+
+	Time** uk;//ук на ук на объекты
+	uk = Creat_arr(2);//массив указателей на динамич объекты
+
+	try {
+		s = uk[0]->to_str();
+		cout << s;
+
+		uk[0]->set_time(13, 10, 2);
+		uk[1]->set_time(11, 8, 5);
+
+		uk[0]->add_hours(14);
+
+		for (int i = 0; i < 2; i++)
+		{
+			s = uk[i]->to_str();
+			cout << "Время " << i + 1 << endl;
+			cout << s << endl;;
+		}
+	}
+	catch (const exception& error)
+	{
+		cout << error.what() << endl;
+	}
+
+	del_arr(uk, 2);
 }

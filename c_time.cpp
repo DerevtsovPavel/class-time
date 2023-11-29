@@ -171,7 +171,8 @@ void Test()
 	delete a2;
 }
 
-void Ob_in_file(Time* a, const std:: string& name)
+/// записываем массив объектов в бинарный файл с именем name
+void Ob_in_file(Time* a,const int n, const std::string& name)
 {
 	if (a == nullptr) throw std::invalid_argument("Zero array");
 	else if (name.length() == 0) throw std::length_error("No file name");
@@ -183,11 +184,144 @@ void Ob_in_file(Time* a, const std:: string& name)
 
 		if (f.is_open())
 		{	
-			int i = 0;
-			while (a != nullptr)
+			f.write((char*)&n, sizeof(n));//char*-перевести в массив байт
+			for (int i = 0; i < n; i++)
 			{
-				f.write((char*)a[i].get_hours(), sizeof(a[i].get_hours()));
+				int x = a[i].get_hours();
+				f.write((char*)&x, sizeof(x));
+				 x = a[i].get_minutes();
+				f.write((char*)&x, sizeof(x));
+				 x = a[i].get_seconds();
+				f.write((char*)&x, sizeof(x));
+
 			}
+
+			f.close();
+		}
+		else throw std::runtime_error("File not open");
+	}
+}
+
+///возвращаем из бинарного файла размер массива объектов и массив объектов 
+Time* Ob_out_file(int &n,const std::string& name)
+{
+	Time* a = nullptr;
+	int x;
+	if (name.length() == 0) throw std::length_error("No file name");
+	else 
+	{
+		std::ifstream f(name, std::ios::binary);
+		f.read((char*)&n, sizeof(n));//читаем размер массива
+		a = new Time[n];
+
+		if (f.is_open()) 
+		{
+			for (int i = 0; i < n; i++)
+			{
+				f.read((char*)&x, sizeof(x));
+				a[i].set_hours(x);
+				f.read((char*)&x, sizeof(x));
+				a[i].set_minutes(x);
+				f.read((char*)&x, sizeof(x));
+				a[i].set_seconds(x);
+			}
+			f.close();
+		}
+		else throw std::runtime_error("File not open");
+	}
+	return a;
+}
+
+///запись массива объектов в текстовый файл
+void Ob_in_txt(Time* a, int n, const std::string& name)
+{
+	if (a == nullptr) throw std::invalid_argument("Zero array");
+	else if (name.length() == 0) throw std::length_error("No file name");
+
+	else 
+	{
+		std::ofstream f(name);
+		if (f.is_open())
+		{
+			for (int i = 0; i < n; i++)
+			{
+				f << "Время " << i + 1 << ":\n";
+				f <<a[i].get_hours() << "\n";
+				f <<a[i].get_minutes() << "\n";
+				f <<a[i].get_seconds() << "\n";
+			}
+			
+			f.close();
 		}
 	}
+}
+
+/// считаем кол-во объектов в текстовом файле
+int kol_ob_in_txt(const std::string& name)
+{
+	int i = 0;
+	std::ifstream f(name);
+	std::string s;
+	while (!f.eof())
+	{
+		f >> s;
+		i++;
+	}
+	f.close();
+	return i / 5;
+}
+
+///возвращаем массив объектов и его размер из текстового файла
+Time* Ob_out_txt(int& n, const std::string& name)
+{	
+	Time* a = nullptr;
+	std::string s;
+	if (name.length() == 0) throw std::runtime_error("File not open");
+
+	else 
+	{
+		std::ifstream f(name);
+		if (f.is_open())
+		{	
+			 n = kol_ob_in_txt(name);
+			a = new Time[n];
+			for (int i = 0; i < n; i++)
+			{	
+				int d;
+				f >> s;
+				f >> s;
+				f >> d;
+				a[i].set_hours(d);
+				f >> d;
+				a[i].set_minutes(d);
+				f >> d;
+				a[i].set_seconds(d);
+			}
+			f.close();
+		}
+	}
+	return a;
+}
+
+///создаём массив указателей на объекты
+Time** Creat_arr(const int n)
+{
+	Time** a = new Time * [n];
+
+	for (int i = 0; i < n; i++)
+	{
+		a[i] = new Time();
+	}
+
+	return a;
+}
+
+///удалить массив указателей на объекты и объекты
+void del_arr(Time** a, int n)
+{	
+	if (a == nullptr) return;
+	for (int i = 0; i < n; i++)
+		if (a[i]!= nullptr)
+		delete a[i];//удаляем объекты
+	delete[]a;//удаляем массив указателей
 }
